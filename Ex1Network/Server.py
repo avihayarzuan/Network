@@ -24,8 +24,9 @@ def writeToPath(key,val):
 def askDaddy(websiteKey):
 	s = socket(AF_INET, SOCK_DGRAM)
 	#dest_ip = '127.0.0.1'
+	#parent_port = 8081
 	parent_ip = sys.argv[2]
-	parent_port = 8081
+	parent_port = sys.argv[3]
 	msg = websiteKey
 	s.sendto(msg, (parent_ip,parent_port))
 	answer, sender_info = s.recvfrom(2048)
