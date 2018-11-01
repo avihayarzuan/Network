@@ -3,58 +3,51 @@ import sys
 from socket import socket, AF_INET, SOCK_DGRAM
 
 
-def readFromPath():
-    #path = "C:\ips.txt"
-	path = sys.argv[4]
-	d ={}
-	with open(path) as f:
-		for line in f:
-			(key,val) = line.split(',')
-			d[key]=val
-	return d
+def read_from_path():
+    # path = "C:\ips.txt"
+    path = sys.argv[4]
+    d = {}
+    with open(path) as f:
+        for line in f:
+            (key, val) = line.split(',')
+            d[key] = val
+    return d
 
-def writeToPath(key,val):
-	#path = "C:\ips.txt"
-	path = sys.argv[4]
-	line = key + "," + val + '\n'
-	file = open(path,w)
-	file.write(line)
-	file.close()
 
-def askDaddy(websiteKey):
-	s = socket(AF_INET, SOCK_DGRAM)
-	#dest_ip = '127.0.0.1'
-	#parent_port = 8081
-	parent_ip = sys.argv[2]
-	parent_port = sys.argv[3]
-	msg = websiteKey
-	s.sendto(msg, (parent_ip,parent_port))
-	answer, sender_info = s.recvfrom(2048)
-	s.close()
+def write_to_path(key, val):
+    # path = "C:\ips.txt"
+    path = sys.argv[4]
+    line = key + "," + val + '\n'
+    file = open(path, "w")
+    file.write(line)
+    file.close()
 
-def findAddress(dic,websiteKey):
-	if dic.has_key(websiteKey):
-		return dic.get(websiteKey)
-	else:
-		answer = askDaddy(websiteKey)
-		dic[websiteKey] = answer
 
-		return answer
-	#return "answer"
+def ask_daddy(websiteKey):
+    s = socket(AF_INET, SOCK_DGRAM)
+    parent_ip = sys.argv[2]
+    parent_port = sys.argv[3]
+    msg = websiteKey
+    s.sendto(msg, (parent_ip, parent_port))
+    answer, sender_info = s.recvfrom(2048)
+    s.close()
+    return answer
 
-dic = readFromPath()
-#print d
 
+def find_address(dic, websiteKey):
+    if dic.has_key(websiteKey):
+        return dic.get(websiteKey)
+    else:
+        answer = ask_daddy(websiteKey)
+        dic[websiteKey] = answer
+        return answer
+
+
+dic = read_from_path()
 s = socket(AF_INET, SOCK_DGRAM)
-#source_ip = '127.0.0.1'
-#source_port = 8080
-my_port = sys.argv[1]
+my_port = int(sys.argv[1])
 source_ip = sys.argv[2]
 s.bind((source_ip, my_port))
 while True:
-	websiteKey, sender_info = s.recvfrom(2048)
-	s.sendto(findAddress(dic,websiteKey), sender_info)
-
-	#print "Message: ", websiteKey, " from: ", sender_info
-#	s.sendto(data.upper(), sender_info)
-
+    websiteKey, sender_info = s.recvfrom(2048)
+    s.sendto(find_address(dic, websiteKey), sender_info)
