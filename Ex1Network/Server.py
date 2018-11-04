@@ -4,7 +4,6 @@ from socket import socket, AF_INET, SOCK_DGRAM
 
 
 def read_from_path():
-    # path = "C:\ips.txt"
     path = sys.argv[4]
     d = {}
     with open(path) as f:
@@ -15,7 +14,6 @@ def read_from_path():
 
 
 def write_to_path(key, val):
-    # path = "C:\ips.txt"
     path = sys.argv[4]
     line = key + "," + val + '\n'
     file = open(path, "w")
@@ -23,23 +21,24 @@ def write_to_path(key, val):
     file.close()
 
 
-def ask_daddy(websiteKey):
+def ask_daddy(website_key):
     s = socket(AF_INET, SOCK_DGRAM)
     parent_ip = sys.argv[2]
     parent_port = sys.argv[3]
-    msg = websiteKey
+    msg = website_key
     s.sendto(msg, (parent_ip, parent_port))
     answer, sender_info = s.recvfrom(2048)
     s.close()
+    write_to_path(website_key, answer)
     return answer
 
 
-def find_address(dic, websiteKey):
-    if dic.has_key(websiteKey):
-        return dic.get(websiteKey)
+def find_address(dic, website_key):
+    if dic.has_key(website_key):
+        return dic.get(website_key)
     else:
-        answer = ask_daddy(websiteKey)
-        dic[websiteKey] = answer
+        answer = ask_daddy(website_key)
+        dic[website_key] = answer
         return answer
 
 
